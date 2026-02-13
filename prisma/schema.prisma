@@ -20,10 +20,12 @@ model User {
 
   role UserRole @default(member)
 
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime?    @updatedAt @map("updated_at")
-  teamMembers TeamMember[]
-  tasks       Task[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  teamMembers   TeamMember[]
+  tasks         Task[]
+  taskHistories TaskHistory[]
 
   @@map("users")
 }
@@ -73,7 +75,26 @@ model Task {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
+  taskHistories TaskHistory[]
+
   @@map("tasks")
+}
+
+model TaskHistory {
+  id String @id @default(uuid())
+
+  taskId String @map("task_id")
+  task   Task   @relation(fields: [taskId], references: [id])
+
+  changedBy String @map("changed_by")
+  user      User   @relation(fields: [changedBy], references: [id])
+
+  oldStatus TaskStatus @map("old_status")
+  newStatus TaskStatus @map("new_status")
+
+  changedAt DateTime? @map("changed_at")
+
+  @@map("tasks_history")
 }
 
 enum TaskPriority {
