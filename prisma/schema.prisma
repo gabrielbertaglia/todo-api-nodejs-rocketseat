@@ -6,3 +6,22 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  admin
+  member
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String @db.VarChar(100)
+  email    String @db.VarChar(150)
+  password String
+
+  role UserRole @default(member)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("users")
+}
