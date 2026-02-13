@@ -1,6 +1,8 @@
+import { authConfig } from '@/config/auth'
 import { prisma } from '@/database/prisma'
 import { AppError } from '@/utils/app-error'
 import { compare } from 'bcrypt'
+import {sign} from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import z from 'zod'
 
@@ -27,9 +29,15 @@ class SessionsController {
     if(!passwordMatches){
       throw new AppError('Email or password incorrect', 401)
     }
+
+    const {expiresIn, secret} = authConfig.jwt
+
+    const token = sign({role: user.role ?? 'member'}, secret, {
+      subject: user.id,
+      expiresIn
+    })
     
-    
-    return response.json({ message: 'SessionsController' })
+    return response.json({ token })
   }
 }
 
