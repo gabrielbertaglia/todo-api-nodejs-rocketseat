@@ -1,8 +1,34 @@
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/app-error'
+import { compare } from 'bcrypt'
 import { Request, Response } from 'express'
+import z from 'zod'
 
 class SessionsController {
 
-  create(request: Request, response: Response) {
+  async create(request: Request, response: Response) {
+    const bodySchema = z.object({
+      email: z.string().email(),
+      password: z.string().min(6)
+    })
+
+    const { email, password } = bodySchema.parse(request.body)
+
+    const user = await prisma.user.findFirst({
+      where: { email }
+    })
+    
+    if(!user){
+      throw new AppError('Email or password incorrect', 401)
+    }
+    
+    const passwordMatches = await compare(password, user.password)
+
+    if(!passwordMatches){
+      throw new AppError('Email or password incorrect', 401)
+    }
+    
+    
     return response.json({ message: 'SessionsController' })
   }
 }
