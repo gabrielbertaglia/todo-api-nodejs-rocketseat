@@ -15,13 +15,14 @@ enum UserRole {
 model User {
   id       String @id @default(uuid())
   name     String @db.VarChar(100)
-  email    String @db.VarChar(150)
+  email    String @unique @db.VarChar(150)
   password String
 
   role UserRole @default(member)
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime?    @updatedAt @map("updated_at")
+  teamMembers TeamMember[]
 
   @@map("users")
 }
@@ -31,8 +32,24 @@ model Team {
   name        String  @db.VarChar(100)
   description String? @db.Text
 
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime?    @updatedAt @map("updated_at")
+  teamMembers TeamMember[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id     String @id @default(uuid())
+  teamId String @map("team_id")
+  userId String @map("user_id")
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  @@map("teams")
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@unique([teamId, userId])
+  @@map("team_members")
 }
