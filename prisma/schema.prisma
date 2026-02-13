@@ -23,6 +23,7 @@ model User {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime?    @updatedAt @map("updated_at")
   teamMembers TeamMember[]
+  tasks       Task[]
 
   @@map("users")
 }
@@ -35,6 +36,7 @@ model Team {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime?    @updatedAt @map("updated_at")
   teamMembers TeamMember[]
+  tasks       Task[]
 
   @@map("teams")
 }
@@ -52,4 +54,36 @@ model TeamMember {
 
   @@unique([teamId, userId])
   @@map("team_members")
+}
+
+model Task {
+  id          String  @id @default(uuid())
+  title       String  @db.VarChar(200)
+  description String? @db.Text
+
+  status   TaskStatus   @default(pending)
+  priority TaskPriority @default(medium)
+
+  userId     String @map("user_id")
+  assignedTo User   @relation(fields: [userId], references: [id])
+
+  teamId String @map("team_id")
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  @@map("tasks")
+}
+
+enum TaskPriority {
+  high
+  medium
+  low
+}
+
+enum TaskStatus {
+  pending
+  in_progress
+  completed
 }
