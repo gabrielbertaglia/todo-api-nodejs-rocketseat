@@ -1,0 +1,9 @@
+{
+  "name": "gerenciador-de-tarefas",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Gabriel Bertaglia",
+  "license": "ISC",
+  "description": "API de gerenciamento de tarefas"
+}
