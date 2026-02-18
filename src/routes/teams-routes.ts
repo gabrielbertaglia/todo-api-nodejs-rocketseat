@@ -14,5 +14,7 @@ teamsRoutes.use(ensureAuthenticated)
 teamsRoutes.use(verifyUserAuthorizations(['admin']))
 teamsRoutes.post('/', teamsController.create)
 
+teamsRoutes.get('/', teamsController.index)
+
 
 export { teamsRoutes }
