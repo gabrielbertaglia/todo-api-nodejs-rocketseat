@@ -1,4 +1,5 @@
 import { prisma } from "@/database/prisma"
+import { AppError } from "@/utils/app-error"
 import { Request, Response } from "express"
 import z from "zod"
 
@@ -54,6 +55,28 @@ class TeamsController {
 
   }
 
+  async delete(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.string(),
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    const teamToDelete = await prisma.team.findUnique({
+      where: { id }
+    })
+
+    if (!teamToDelete) {
+      throw new AppError("Time já foi deletado", 400)
+    }
+
+    await prisma.team.delete({
+      where:
+        { id }
+    })
+
+    return response.json({ message: "Time deletado com sucesso" })
+  }
 }
 
 export { TeamsController }
