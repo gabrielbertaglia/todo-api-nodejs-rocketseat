@@ -36,6 +36,51 @@ class TeamMembersController {
     })
 
   }
+
+  async deleteMember(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      teamId: z.string().uuid(),
+      userId: z.string().uuid(),
+    })
+
+    const { teamId, userId } = paramsSchema.parse(request.params)
+
+    const teamExists = await prisma.team.findUnique({
+      where: {
+        id: teamId
+      }
+    })
+
+    if (!teamExists) {
+      throw new AppError("Time não encontrado", 404)
+    }
+
+    const member = await prisma.teamMember.findUnique({
+      where: {
+        teamId_userId: {
+          teamId,
+          userId
+        }
+      }
+    })
+
+    if (!member) {
+      throw new AppError("Membro não encontrado no time", 404)
+    }
+
+    await prisma.teamMember.delete({
+      where: {
+        teamId_userId: {
+          teamId,
+          userId
+        }
+      }
+    })
+
+    return response.json({
+      message: "Membro removido com sucesso"
+    })
+  }
 }
 
 export {

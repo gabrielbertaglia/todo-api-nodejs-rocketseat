@@ -9,6 +9,6 @@ const teamMembersController = new TeamMembersController()
 
 teamMembersRoutes.use(ensureAuthenticated, verifyUserAuthorizations(['admin']))
 teamMembersRoutes.post('/', teamMembersController.create)
-
+teamMembersRoutes.delete('/teams/:teamId/members/:userId', teamMembersController.deleteMember)
 
 export { teamMembersRoutes }
