@@ -10,7 +10,7 @@ class TeamsController {
       description: z.string()
     })
 
-    const {description, name} = bodySchema.parse(request.body)
+    const { description, name } = bodySchema.parse(request.body)
 
     await prisma.team.create({
       data: {
@@ -27,6 +27,33 @@ class TeamsController {
 
     return response.json(teams)
   }
+
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.string(),
+    })
+
+    const bodySchema = z.object({
+      name: z.string().max(100),
+      description: z.string()
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+    const { description, name } = bodySchema.parse(request.body)
+
+    await prisma.team.update({
+      data: {
+        description, name
+      },
+      where: {
+        id
+      }
+    })
+
+    return response.json()
+
+  }
+
 }
 
-export {TeamsController}
+export { TeamsController }
