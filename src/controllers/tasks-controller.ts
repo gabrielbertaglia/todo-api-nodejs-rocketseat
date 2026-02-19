@@ -62,6 +62,21 @@ class TasksController {
 
   }
 
+  async index(request: Request, response: Response) {
+    const schemaParams = z.object({
+      teamId: z.string().uuid()
+    })
+
+    const { teamId } = schemaParams.parse(request.params)
+
+    const tasks = await prisma.task.findMany({
+      where: {
+        teamId: teamId
+      },
+    })
+
+    response.json(tasks)
+  }
 }
 
 export { TasksController }

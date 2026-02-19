@@ -8,5 +8,6 @@ const tasksController = new TasksController()
 
 tasksRoutes.use(ensureAuthenticated)
 tasksRoutes.post('/', tasksController.create)
+tasksRoutes.get('/:teamId', tasksController.index)
 
 export { tasksRoutes }
