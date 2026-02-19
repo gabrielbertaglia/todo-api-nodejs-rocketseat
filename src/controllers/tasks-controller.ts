@@ -3,8 +3,9 @@ import { TaskPriority, TaskStatus } from "@prisma/client"
 
 
 import z from "zod";
-import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/app-error";
+import { userSafeSelect } from "@/utils/user-safe-select";
+import { prisma } from "@/database/prisma";
 
 class TasksController {
   async create(request: Request, response: Response) {
@@ -21,6 +22,19 @@ class TasksController {
     })
 
     const { title, priority, status, description, teamId, userId } = bodySchema.parse(request.body)
+
+    const loggedUserId = request.user?.id
+
+    const memberShip = await prisma.teamMember.findFirst({
+      where: {
+        teamId,
+        userId: loggedUserId
+      }
+    })
+
+    if (!memberShip) {
+      throw new AppError("Você não pertence a esse time.")
+    }
 
     const targetUser = await prisma.teamMember.findFirst({
       where: {
@@ -47,6 +61,7 @@ class TasksController {
     return response.status(201).json(task)
 
   }
+
 }
 
 export { TasksController }
