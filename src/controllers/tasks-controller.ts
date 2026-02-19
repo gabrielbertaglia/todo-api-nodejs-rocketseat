@@ -77,6 +77,36 @@ class TasksController {
 
     response.json(tasks)
   }
+
+  async update(request: Request, response: Response) {
+    const schemaParams = z.object({
+      id: z.string().uuid(),
+    })
+
+    const bodySchema = z.object({
+      title: z.string().max(100),
+      description: z.string().max(100).optional(),
+      status: z.nativeEnum(TaskStatus),
+      priority: z.nativeEnum(TaskPriority)
+    })
+
+    const { id } = schemaParams.parse(request.params)
+    const { priority, status, title, description } = bodySchema.parse(request.body)
+
+    const updated = await prisma.task.update({
+      where: {
+        id
+      },
+      data: {
+        description,
+        priority,
+        status,
+        title
+      }
+    })
+
+    response.json(updated)
+  }
 }
 
 export { TasksController }
