@@ -81,6 +81,57 @@ class TeamMembersController {
       message: "Membro removido com sucesso"
     })
   }
+
+  async listMembersByTeam(request: Request, response: Response) {
+
+    const schemaParams = z.object({
+      teamId: z.string().uuid()
+    })
+
+    const { teamId } = schemaParams.parse(request.params)
+
+    const teamsExists = await prisma.team.findUnique({
+      where: { id: teamId }
+    })
+
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        teamMembers: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const formattedResponse = {
+      id: team?.id,
+      name: team?.name,
+      description: team?.description,
+      createdAt: team?.createdAt,
+      updatedAt: team?.updatedAt,
+      members: team?.teamMembers.map(member => member.user)
+    }
+
+    if (!teamsExists) {
+      throw new AppError("Time não encontrado", 404)
+    }
+
+    response.json(formattedResponse)
+  }
 }
 
 export {
