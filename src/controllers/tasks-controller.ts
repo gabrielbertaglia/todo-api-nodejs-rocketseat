@@ -64,14 +64,22 @@ class TasksController {
 
   async index(request: Request, response: Response) {
     const schemaParams = z.object({
-      teamId: z.string().uuid()
+      teamId: z.string().uuid(),
+    })
+
+    const querySchema = z.object({
+      status: z.nativeEnum(TaskStatus).optional(),
+      priority: z.nativeEnum(TaskPriority).optional(),
     })
 
     const { teamId } = schemaParams.parse(request.params)
+    const { status, priority } = querySchema.parse(request.query)
 
     const tasks = await prisma.task.findMany({
       where: {
-        teamId: teamId
+        teamId: teamId,
+        ...(status && { status }),
+        ...(priority && { priority }),
       },
     })
 
