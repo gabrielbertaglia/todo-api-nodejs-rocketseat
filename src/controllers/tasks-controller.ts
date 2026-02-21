@@ -107,6 +107,34 @@ class TasksController {
 
     response.json(updated)
   }
+
+  async delete(request: Request, response: Response) {
+    const schemaParams = z.object({
+      id: z.string().uuid()
+    })
+
+    const { id } = schemaParams.parse(request.params)
+
+    const task = await prisma.task.findUnique({
+      where: {
+        id
+      }
+    })
+
+    if (!task) {
+      throw new AppError("Tarefa não existe")
+    }
+
+    await prisma.task.delete({
+      where: {
+        id
+      }
+    })
+
+    response.status(201).json({
+      message: "Tarefa excluída com sucesso"
+    })
+  }
 }
 
 export { TasksController }
