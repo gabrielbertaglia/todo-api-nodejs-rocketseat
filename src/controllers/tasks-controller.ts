@@ -23,19 +23,6 @@ class TasksController {
 
     const { title, priority, status, description, teamId, userId } = bodySchema.parse(request.body)
 
-    const loggedUserId = request.user?.id
-
-    const memberShip = await prisma.teamMember.findFirst({
-      where: {
-        teamId,
-        userId: loggedUserId
-      }
-    })
-
-    if (!memberShip) {
-      throw new AppError("Você não pertence a esse time.")
-    }
-
     const targetUser = await prisma.teamMember.findFirst({
       where: {
         teamId,
