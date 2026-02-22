@@ -51,7 +51,6 @@ class TasksController {
           taskId: task.id,
           changedBy: request.user?.id!,
           oldStatus: status,
-          changedAt: new Date()
         }
       })
 
@@ -144,7 +143,6 @@ class TasksController {
             changedBy: request.user?.id!,
             oldStatus: existingTask.status,
             newStatus: status,
-            changedAt: new Date()
           }
         })
       }
