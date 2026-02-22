@@ -137,10 +137,6 @@ class TasksController {
         }
       })
 
-
-      console.log("updatedTask.status", updatedTask.status)
-      console.log("status", status)
-      console.log("updatedTask.status !== status", updatedTask.status !== status)
       if (task?.status !== status) {
         await t.taskHistory.create({
           data: {
