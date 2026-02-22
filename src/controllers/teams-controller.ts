@@ -7,8 +7,8 @@ class TeamsController {
   async create(request: Request, response: Response) {
 
     const bodySchema = z.object({
-      name: z.string().max(100),
-      description: z.string()
+      name: z.string().min(2).max(100).trim(),
+      description: z.string().optional()
     })
 
     const { description, name } = bodySchema.parse(request.body)
@@ -35,8 +35,8 @@ class TeamsController {
     })
 
     const bodySchema = z.object({
-      name: z.string().max(100),
-      description: z.string()
+      name: z.string().min(2).max(100).trim(),
+      description: z.string().optional()
     })
 
     const { id } = paramsSchema.parse(request.params)
@@ -62,12 +62,22 @@ class TeamsController {
 
     const { id } = paramsSchema.parse(request.params)
 
-    const teamToDelete = await prisma.team.findUnique({
+    const team = await prisma.team.findUnique({
       where: { id }
     })
 
-    if (!teamToDelete) {
-      throw new AppError("Time já foi deletado", 400)
+    if (!team) {
+      throw new AppError("Time não encontrado", 404)
+    }
+
+    const membersCount = await prisma.teamMember.count({
+      where: {
+        teamId: id
+      }
+    })
+
+    if (membersCount > 0) {
+      throw new AppError("Não foi possível deleta o time. Existe membros vinculados a ele.")
     }
 
     await prisma.team.delete({
