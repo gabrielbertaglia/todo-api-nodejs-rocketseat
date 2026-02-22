@@ -89,8 +89,8 @@ model TaskHistory {
   changedBy String @map("changed_by")
   user      User   @relation(fields: [changedBy], references: [id])
 
-  oldStatus TaskStatus @map("old_status")
-  newStatus TaskStatus @map("new_status")
+  oldStatus TaskStatus  @map("old_status")
+  newStatus TaskStatus? @map("new_status")
 
   changedAt DateTime? @map("changed_at")
 
