@@ -1,11 +1,9 @@
-import { Request, Response } from "express";
-import { TaskPriority, TaskStatus } from "@prisma/client"
+import { Request, Response } from 'express'
+import { TaskPriority, TaskStatus } from '@prisma/client'
 
-
-import z from "zod";
-import { AppError } from "@/utils/app-error";
-import { userSafeSelect } from "@/utils/user-safe-select";
-import { prisma } from "@/database/prisma";
+import z from 'zod'
+import { AppError } from '@/utils/app-error'
+import { prisma } from '@/database/prisma'
 
 class TasksController {
   async create(request: Request, response: Response) {
@@ -27,12 +25,12 @@ class TasksController {
       const targetUser = await prisma.teamMember.findFirst({
         where: {
           teamId,
-          userId
-        }
+          userId,
+        },
       })
 
       if (!targetUser) {
-        throw new AppError("Usuário não pertence a esse time.")
+        throw new AppError('Usuário não pertence a esse time.')
       }
 
       const task = await t.task.create({
@@ -42,23 +40,22 @@ class TasksController {
           priority,
           status,
           teamId,
-          userId
-        }
+          userId,
+        },
       })
 
       await t.taskHistory.create({
         data: {
           taskId: task.id,
-          changedBy: request.user?.id!,
+          changedBy: request.user?.id || '',
           oldStatus: status,
-        }
+        },
       })
 
       return task
     })
 
     return response.status(201).json(result)
-
   }
 
   async index(request: Request, response: Response) {
@@ -75,16 +72,16 @@ class TasksController {
     const { status, priority } = querySchema.parse(request.query)
 
     const teamExists = await prisma.team.findUnique({
-      where: { id: teamId }
+      where: { id: teamId },
     })
 
     if (!teamExists) {
-      throw new AppError("Time não encontrado", 404)
+      throw new AppError('Time não encontrado', 404)
     }
 
     const tasks = await prisma.task.findMany({
       where: {
-        teamId: teamId,
+        teamId,
         ...(status && { status }),
         ...(priority && { priority }),
       },
@@ -102,48 +99,47 @@ class TasksController {
       title: z.string().max(100),
       description: z.string().max(100).optional(),
       status: z.nativeEnum(TaskStatus),
-      priority: z.nativeEnum(TaskPriority)
+      priority: z.nativeEnum(TaskPriority),
     })
 
     const { id } = schemaParams.parse(request.params)
     const { priority, status, title, description } = bodySchema.parse(request.body)
 
     const result = await prisma.$transaction(async t => {
-
       const existingTask = await t.task.findUnique({
-        where: { id }
+        where: { id },
       })
 
       if (!existingTask) {
-        throw new AppError("Task não encontrada.", 404)
+        throw new AppError('Task não encontrada.', 404)
       }
 
       const task = await t.task.findUnique({
         where: {
-          id: id
-        }
+          id,
+        },
       })
 
       const updatedTask = await t.task.update({
         where: {
-          id
+          id,
         },
         data: {
           description,
           priority,
           status,
-          title
-        }
+          title,
+        },
       })
 
       if (task?.status !== status) {
         await t.taskHistory.create({
           data: {
             taskId: id,
-            changedBy: request.user?.id!,
+            changedBy: request.user?.id || '',
             oldStatus: existingTask.status,
             newStatus: status,
-          }
+          },
         })
       }
       return updatedTask
@@ -154,29 +150,29 @@ class TasksController {
 
   async delete(request: Request, response: Response) {
     const schemaParams = z.object({
-      id: z.string().uuid()
+      id: z.string().uuid(),
     })
 
     const { id } = schemaParams.parse(request.params)
 
     const task = await prisma.task.findUnique({
       where: {
-        id
-      }
+        id,
+      },
     })
 
     if (!task) {
-      throw new AppError("Tarefa não existe")
+      throw new AppError('Tarefa não existe')
     }
 
     await prisma.task.delete({
       where: {
-        id
-      }
+        id,
+      },
     })
 
     response.status(201).json({
-      message: "Tarefa excluída com sucesso"
+      message: 'Tarefa excluída com sucesso',
     })
   }
 }

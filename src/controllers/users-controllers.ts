@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response } from 'express'
 import { hash } from 'bcrypt'
-import { z } from 'zod';
-import { prisma } from '@/database/prisma';
-import { AppError } from '@/utils/app-error';
+import { z } from 'zod'
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/app-error'
 
 class UsersController {
   async create(request: Request, response: Response) {
@@ -17,7 +17,7 @@ class UsersController {
     const userAlreadyExists = await prisma.user.findFirst({
       where: {
         email,
-      }
+      },
     })
 
     if (userAlreadyExists) throw new AppError('User already exists')
@@ -29,7 +29,7 @@ class UsersController {
         name,
         email,
         password: hashedPassword,
-      }
+      },
     })
 
     const { password: _, ...userWithoutPassword } = user

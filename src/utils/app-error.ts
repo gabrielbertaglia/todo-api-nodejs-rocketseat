@@ -7,4 +7,4 @@ class AppError {
   }
 }
 
-export {AppError}
+export { AppError }

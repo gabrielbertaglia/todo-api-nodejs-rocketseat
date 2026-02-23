@@ -1,12 +1,11 @@
-import { Router } from "express";
-import { TeamsController } from "@/controllers/teams-controller";
+import { Router } from 'express'
+import { TeamsController } from '@/controllers/teams-controller'
 
-import { ensureAuthenticated } from "@/middlewares/ensure-authenticated";
-import { verifyUserAuthorizations } from "@/middlewares/verifyUserAuthorization";
-import { teamMembersRoutes } from "./team-members-routes";
-import { TeamMembersController } from "@/controllers/team-members-controller";
+import { ensureAuthenticated } from '@/middlewares/ensure-authenticated'
+import { verifyUserAuthorizations } from '@/middlewares/verifyUserAuthorization'
+import { TeamMembersController } from '@/controllers/team-members-controller'
 
-const teamsRoutes = Router();
+const teamsRoutes = Router()
 
 const teamsController = new TeamsController()
 const teamsControllerMembers = new TeamMembersController()

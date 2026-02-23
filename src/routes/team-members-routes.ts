@@ -1,7 +1,7 @@
-import { TeamMembersController } from "@/controllers/team-members-controller";
-import { ensureAuthenticated } from "@/middlewares/ensure-authenticated";
-import { verifyUserAuthorizations } from "@/middlewares/verifyUserAuthorization";
-import { Router } from "express";
+import { TeamMembersController } from '@/controllers/team-members-controller'
+import { ensureAuthenticated } from '@/middlewares/ensure-authenticated'
+import { verifyUserAuthorizations } from '@/middlewares/verifyUserAuthorization'
+import { Router } from 'express'
 
 const teamMembersRoutes = Router()
 

@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router } from 'express'
 
-import { SessionsController } from "@/controllers/sections-controller";
+import { SessionsController } from '@/controllers/sections-controller'
 
-const sessionsRoutes = Router();
-const sessionsController = new SessionsController();
+const sessionsRoutes = Router()
+const sessionsController = new SessionsController()
 
-sessionsRoutes.post("/", sessionsController.create);
+sessionsRoutes.post('/', sessionsController.create)
 
 export { sessionsRoutes }

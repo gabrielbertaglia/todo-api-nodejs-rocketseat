@@ -1,29 +1,29 @@
-import { prisma } from "@/database/prisma";
-import { AppError } from "@/utils/app-error";
-import { Request, Response } from "express";
-import z from "zod";
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/app-error'
+import { Request, Response } from 'express'
+import z from 'zod'
 
 class TaskHistoryController {
   async index(request: Request, response: Response) {
     const paramsSchema = z.object({
-      id: z.string().uuid()
+      id: z.string().uuid(),
     })
 
     const { id } = paramsSchema.parse(request.params)
 
     const task = await prisma.task.findUnique({
-      where: { id }
+      where: { id },
     })
 
-    console.log("task", task)
+    console.log('task', task)
 
     if (!task) {
-      throw new AppError("Task não encontrada", 404)
+      throw new AppError('Task não encontrada', 404)
     }
 
     const taskHistory = await prisma.taskHistory.findMany({
       where: {
-        taskId: id
+        taskId: id,
       },
       select: {
         newStatus: true,
@@ -34,13 +34,13 @@ class TaskHistoryController {
             id: true,
             name: true,
             email: true,
-            role: true
-          }
-        }
+            role: true,
+          },
+        },
       },
       orderBy: {
-        changedAt: "desc"
-      }
+        changedAt: 'desc',
+      },
     })
 
     return response.json(taskHistory)

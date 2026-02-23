@@ -1,8 +1,8 @@
-import { TasksController } from "@/controllers/tasks-controller";
-import { ensureAuthenticated } from "@/middlewares/ensure-authenticated";
-import { verifyTaskPermission } from "@/middlewares/verifyTaskPermission";
-import { verifyUserAuthorizations } from "@/middlewares/verifyUserAuthorization";
-import { Router } from "express";
+import { TasksController } from '@/controllers/tasks-controller'
+import { ensureAuthenticated } from '@/middlewares/ensure-authenticated'
+import { verifyTaskPermission } from '@/middlewares/verifyTaskPermission'
+import { verifyUserAuthorizations } from '@/middlewares/verifyUserAuthorization'
+import { Router } from 'express'
 
 const tasksRoutes = Router()
 

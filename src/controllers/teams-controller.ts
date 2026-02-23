@@ -1,14 +1,13 @@
-import { prisma } from "@/database/prisma"
-import { AppError } from "@/utils/app-error"
-import { Request, Response } from "express"
-import z from "zod"
+import { prisma } from '@/database/prisma'
+import { AppError } from '@/utils/app-error'
+import { Request, Response } from 'express'
+import z from 'zod'
 
 class TeamsController {
   async create(request: Request, response: Response) {
-
     const bodySchema = z.object({
       name: z.string().min(2).max(100).trim(),
-      description: z.string().optional()
+      description: z.string().optional(),
     })
 
     const { description, name } = bodySchema.parse(request.body)
@@ -17,7 +16,7 @@ class TeamsController {
       data: {
         name,
         description,
-      }
+      },
     })
 
     return response.status(201).json(team)
@@ -36,7 +35,7 @@ class TeamsController {
 
     const bodySchema = z.object({
       name: z.string().min(2).max(100).trim(),
-      description: z.string().optional()
+      description: z.string().optional(),
     })
 
     const { id } = paramsSchema.parse(request.params)
@@ -44,15 +43,14 @@ class TeamsController {
 
     await prisma.team.update({
       data: {
-        description, name
+        description, name,
       },
       where: {
-        id
-      }
+        id,
+      },
     })
 
     return response.json()
-
   }
 
   async delete(request: Request, response: Response) {
@@ -63,29 +61,29 @@ class TeamsController {
     const { id } = paramsSchema.parse(request.params)
 
     const team = await prisma.team.findUnique({
-      where: { id }
+      where: { id },
     })
 
     if (!team) {
-      throw new AppError("Time não encontrado", 404)
+      throw new AppError('Time não encontrado', 404)
     }
 
     const membersCount = await prisma.teamMember.count({
       where: {
-        teamId: id
-      }
+        teamId: id,
+      },
     })
 
     if (membersCount > 0) {
-      throw new AppError("Não foi possível deleta o time. Existe membros vinculados a ele.")
+      throw new AppError('Não foi possível deleta o time. Existe membros vinculados a ele.')
     }
 
     await prisma.team.delete({
       where:
-        { id }
+        { id },
     })
 
-    return response.json({ message: "Time deletado com sucesso" })
+    return response.json({ message: 'Time deletado com sucesso' })
   }
 }
 

@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { verify } from "jsonwebtoken";
-import { authConfig } from "@/config/auth";
-import { AppError } from "@/utils/app-error";
-
+import { Request, Response, NextFunction } from 'express'
+import { verify } from 'jsonwebtoken'
+import { authConfig } from '@/config/auth'
+import { AppError } from '@/utils/app-error'
 
 interface ITokenPayload {
   sub: string;
@@ -15,17 +14,17 @@ function ensureAuthenticated(request: Request, response: Response, next: NextFun
     if (!authHeader) {
       throw new AppError('JWT token not found', 401)
     }
-    const [, auth] = authHeader.split(" ")
+    const [, auth] = authHeader.split(' ')
 
-    const {role, sub: user_id} = verify(auth, authConfig.jwt.secret) as ITokenPayload
+    const { role, sub: userId } = verify(auth, authConfig.jwt.secret) as ITokenPayload
 
     request.user = {
-      id: user_id,
-      role
+      id: userId,
+      role,
     }
 
     return next()
-  } catch (error) {
+  } catch (_error) {
     throw new AppError('Invalid JWT token', 401)
   }
 }
