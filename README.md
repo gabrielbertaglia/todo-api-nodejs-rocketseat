@@ -26,7 +26,7 @@ npm install
 Criar um arquivo `.env` na raiz do projeto:
 
 ``` env
-DATABASE_URL=postgresql://user:password@localhost:5432/database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/todo?schema=public
 JWT_SECRET=sua_chave_secreta
 PORT=3333
 ```
