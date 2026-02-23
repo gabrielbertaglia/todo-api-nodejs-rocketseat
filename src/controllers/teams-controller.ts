@@ -13,14 +13,14 @@ class TeamsController {
 
     const { description, name } = bodySchema.parse(request.body)
 
-    await prisma.team.create({
+    const team = await prisma.team.create({
       data: {
         name,
         description,
       }
     })
 
-    return response.status(201).json()
+    return response.status(201).json(team)
   }
 
   async index(request: Request, response: Response) {

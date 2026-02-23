@@ -29,9 +29,6 @@ describe("TeamsController", () => {
         description: "Test Description"
       })
 
-    console.log("teamsResponse.body", teamsResponse.body.id)
-
-
     expect(teamsResponse.status).toBe(201)
   })
 })
